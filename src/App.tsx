@@ -5,13 +5,22 @@ import { Good } from './types/Good';
 
 import * as goodsAPI from './api/goods';
 
-// import { getAll, get5First, getRed } from './api/goods';
-// or
-// import * as goodsAPI from './api/goods';
-
 export const App: React.FC = () => {
   const [goods, setGoods] = useState<Good[]>([]);
   const [messageError, setMessageError] = useState<null | string>(null);
+
+  // DRY: спільний обробник завантаження з єдиним try/catch
+  const loadGoods = async (fetcher: () => Promise<Good[]>) => {
+    try {
+      const data = await fetcher();
+
+      setGoods(data);
+      setMessageError(null);
+    } catch (err) {
+      setMessageError('Failed to load goods. Please try again.');
+      setGoods([]);
+    }
+  };
 
   return (
     <div className="App">
@@ -20,17 +29,7 @@ export const App: React.FC = () => {
       <button
         type="button"
         data-cy="all-button"
-        onClick={async () => {
-          try {
-            const data = await goodsAPI.getAll();
-
-            setGoods(data);
-            setMessageError(null);
-          } catch (err) {
-            setMessageError('Failed to load goods. Please try again.');
-            setGoods([]);
-          }
-        }}
+        onClick={() => loadGoods(goodsAPI.getAll)}
       >
         Load all goods
       </button>
@@ -38,17 +37,7 @@ export const App: React.FC = () => {
       <button
         type="button"
         data-cy="first-five-button"
-        onClick={async () => {
-          try {
-            const data = await goodsAPI.get5First();
-
-            setGoods(data);
-            setMessageError(null);
-          } catch (err) {
-            setMessageError('Failed to load goods. Please try again.');
-            setGoods([]);
-          }
-        }}
+        onClick={() => loadGoods(goodsAPI.get5First)}
       >
         Load 5 first goods
       </button>
@@ -56,17 +45,7 @@ export const App: React.FC = () => {
       <button
         type="button"
         data-cy="red-button"
-        onClick={async () => {
-          try {
-            const data = await goodsAPI.getRedGoods();
-
-            setGoods(data);
-            setMessageError(null);
-          } catch (err) {
-            setMessageError('Failed to load goods. Please try again.');
-            setGoods([]);
-          }
-        }}
+        onClick={() => loadGoods(goodsAPI.getRedGoods)}
       >
         Load red goods
       </button>
