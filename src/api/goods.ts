@@ -3,7 +3,6 @@ import { Good } from '../types/Good';
 // eslint-disable-next-line
 const API_URL = `https://mate-academy.github.io/react_dynamic-list-of-goods/goods.json`;
 
-// універсальний хелпер: кидає помилку при неуспішному HTTP-статусі
 async function request<T>(url: string): Promise<T> {
   const res = await fetch(url);
 
@@ -12,9 +11,7 @@ async function request<T>(url: string): Promise<T> {
 
     try {
       details = await res.text();
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     throw new Error(
       `Request failed: ${res.status} ${res.statusText}${details ? ` — ${details}` : ''}`,
@@ -32,7 +29,7 @@ export const get5First = async () => {
   const goods = await getAll();
 
   return goods
-    .slice() // щоб не мутувати оригінальний масив
+    .slice()
     .sort((a, b) => a.name.localeCompare(b.name))
     .slice(0, 5); // sort and get the first 5
 };

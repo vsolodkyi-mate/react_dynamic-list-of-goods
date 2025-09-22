@@ -9,7 +9,6 @@ export const App: React.FC = () => {
   const [goods, setGoods] = useState<Good[]>([]);
   const [messageError, setMessageError] = useState<null | string>(null);
 
-  // DRY: спільний обробник завантаження з єдиним try/catch
   const loadGoods = async (fetcher: () => Promise<Good[]>) => {
     try {
       const data = await fetcher();
